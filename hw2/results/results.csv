@@ -1,0 +1,11 @@
+,Naive Bayes Classifier,Naive Bayes Classifier with PCA preprocessing
+lung-cancer.csv,0.87097,0.83871
+magic.csv,0.72685,0.71712
+wine.csv,0.9887,0.9661
+lymphography.csv,0.85034,0.85714
+car.csv,0.6989,0.71743
+wine-quality-white.csv,0.44864,0.47989
+yeast.csv,0.13621,0.51585
+wine-quality-red.csv,0.56133,0.56446
+zoo.csv,1.0,0.87
+waveform.csv,0.80916,0.82977

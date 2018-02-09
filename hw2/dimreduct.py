@@ -68,12 +68,15 @@ if __name__ == "__main__":
     y_pred = apply_nb(X, y, size)
     accuracy = round(1 - (np.float((y != y_pred).sum()) / np.float(y.shape[0])), 5)
     results[file_list[i]] = [accuracy]
-    #print "File %s Total %d misssed %d" % (file_list[i], y.shape[0], (y != y_pred).sum())
    
     # Part 2 - Apply PCA preprocessing and then naive bayes classification
     X = apply_pca(X)
     y_pred = apply_nb(X, y, size)
     accuracy = round(1 - (np.float((y != y_pred).sum()) / np.float(y.shape[0])), 5)
     results[file_list[i]].append(accuracy)
+ 
+  # Part 3 - Write results to csv file
+  df = pd.DataFrame.from_dict(results, orient="index")
+  df.columns = ["Naive Bayes Classifier", "Naive Bayes Classifier with PCA preprocessing"]
+  df.to_csv("results/results.csv")
   
-  print results 
