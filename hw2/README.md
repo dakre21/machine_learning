@@ -7,7 +7,11 @@
 
 ## Dimensionality Reduction 
 - ``` Run 'python dimreduct.py' to execute the code ```
-  - The code will read in a dataset from a csv file into a 2D array via pandas. After which I'll have two classifiers run against the data set which does not use a preprocessing step (i.e. feature selection or PCA) and report the accuracies of those models
+  - The code will read in a dataset provided the ECE523 repository which will be in the format of set of csv files. 
+  - Iteratively, once a file is read into program memory the first part will apply the naive bayes classifier and assess its overall accuracy based on the data and output. 
+  - The second part will then apply PCA (i.e. principal component analysis) on the data as a preprocessor to reduce the dimensions down according to the MLE protocol in sklean (e.g. I set the n_components value to 0.5 which will allow for sklearn to attempt to reduce the dimensionality to an ideal setting for classification). 
+  - After the preprocessing finishes, I apply the naive bayes classification algorithm provided by sklearn followed by assessing the overall accuracy of the fit. 
+  - In the final step I create a data frame with a dictionary of the results with the key value being the data file read in (i.e. the csv file). After which I write the data frame to a results.csv file which is a 10x2 table format.
 
 ## Density Estimation
 - ``` Run 'python densest.py' to execute the code ```
