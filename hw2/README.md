@@ -15,7 +15,7 @@
 
 ## Density Estimation
 - ``` Run 'python densest.py' to execute the code ```
-  - This code will generate a checkerboard of data from two classes and employ a density estimator to classify the data. After the classification the code will plot the probability of 'x given y' or P(X|Y) using the density estimator
+  - This code will generate a checkerboard of data from two classes and employ a density estimator (kNN) to classify the data. After the classification the code will plot the probability of 'x given y' or P(X|Y) using the density estimator
 
 ## NOTE:
 - This code was ran using python2.7 + anaconda distribution
