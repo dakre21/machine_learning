@@ -32,6 +32,7 @@ def back_prop_noreg_fn(features, labels, mode):
   input_layer = tf.reshape(features["x"], [-1, 28, 28, 1])
 
   # 1st hidden layer - apply convolution to first layer
+  print ("Entering 1st hidden layer")
   conv = tf.layers.conv2d(
     inputs=input_layer,
     filters=32,
@@ -41,14 +42,15 @@ def back_prop_noreg_fn(features, labels, mode):
   )
 
   # 2nd hidden layer - apply batch normalization
+  print ("Entering 2nd hidden layer")
   batch = tf.layers.batch_normalization(
     inputs=conv
   )
 
   # Flatten batch data set and apply it to dense layer
   size = batch.get_shape().as_list()
-  batch_flat = tf.reshape(batch, [-1, size[0] * size[1] * size[2] * size[3]])
-  dense = tf.layers.dense(inputs=batch, units=1024, activation=tf.nn.relu)
+  batch_flat = tf.reshape(batch, [-1, size[1] * size[2] * size[3]])
+  dense = tf.layers.dense(inputs=batch_flat, units=1024, activation=tf.nn.relu)
 
   # Generate predictions on mnist data
   predictions = {
@@ -58,6 +60,7 @@ def back_prop_noreg_fn(features, labels, mode):
 
   # Check if the mode is equal to the PREDICT mode key
   if mode == tf.estimator.ModeKeys.PREDICT:
+    print ("Entering Prediction step")
     return tf.estimator.EstimatorSpec(mode=mode, predictions=predictions)
 
   # Calculate the loss of training and evaluations
@@ -65,6 +68,7 @@ def back_prop_noreg_fn(features, labels, mode):
 
   # Apply SGB to training data if in training mode
   if mode == tf.estimator.ModeKeys.TRAIN:
+    print ("Entering Train step")
     optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.1)
     train_op = optimizer.minimize(
       loss=loss,
@@ -73,6 +77,7 @@ def back_prop_noreg_fn(features, labels, mode):
     return tf.estimator.EstimatorSpec(mode=mode, loss=loss, train_op=train_op)
 
   # Return the evaluation metrics
+  print ("Starting evaluation operations")
   eval_metric_ops = {
     "accuracy" : tf.metrics.accuracy(
       labels=labels,
@@ -83,11 +88,10 @@ def back_prop_noreg_fn(features, labels, mode):
   return tf.estimator.EstimatorSpec(mode=mode, loss=loss, eval_metric_ops=eval_metric_ops)
 
 
-  
 def back_prop_reg_fn(features, labels, mode):
   """
-  back_prop_reg_fn : model function for back propagation algorithm
-  neural network w/ 2 hidden layers and regularization
+  #back_prop_reg_fn : model function for back propagation algorithm
+  #neural network w/ 2 hidden layers and regularization
   """
   # Reshape input data to 4-D tensor
   # According to Tensorflow's documentation on MNIST data the following applies:
@@ -98,6 +102,7 @@ def back_prop_reg_fn(features, labels, mode):
   regularizer = tf.contrib.layers.l2_regularizer(scale=0.1)
 
   # 1st hidden layer - apply convolution to first layer
+  print ("Entering 1st hidden layer")
   conv = tf.layers.conv2d(
     inputs=input_layer,
     filters=32,
@@ -108,15 +113,15 @@ def back_prop_reg_fn(features, labels, mode):
   )
 
   # 2nd hidden layer - apply batch normalization
+  print ("Entering 2nd hidden layer")
   batch = tf.layers.batch_normalization(
     inputs=conv,
-    kernel_regularizer=regularizer
   )
 
   # Flatten batch data set and apply it to dense layer
   size = batch.get_shape().as_list()
-  batch_flat = tf.reshape(batch, [-1, size[0] * size[1] * size[2] * size[3]])
-  dense = tf.layers.dense(inputs=batch, units=1024, activation=tf.nn.relu)
+  batch_flat = tf.reshape(batch, [-1, size[1] * size[2] * size[3]])
+  dense = tf.layers.dense(inputs=batch_flat, units=1024, activation=tf.nn.relu)
 
   # Generate predictions on mnist data
   predictions = {
@@ -126,6 +131,7 @@ def back_prop_reg_fn(features, labels, mode):
 
   # Check if the mode is equal to the PREDICT mode key
   if mode == tf.estimator.ModeKeys.PREDICT:
+    print ("Entering Prediction step")
     return tf.estimator.EstimatorSpec(mode=mode, predictions=predictions)
 
   # Calculate the loss of training and evaluations
@@ -133,6 +139,7 @@ def back_prop_reg_fn(features, labels, mode):
 
   # Apply SGB to training data if in training mode
   if mode == tf.estimator.ModeKeys.TRAIN:
+    print ("Entering Train step")
     optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.1)
     train_op = optimizer.minimize(
       loss=loss,
@@ -141,6 +148,7 @@ def back_prop_reg_fn(features, labels, mode):
     return tf.estimator.EstimatorSpec(mode=mode, loss=loss, train_op=train_op)
 
   # Return the evaluation metrics
+  print ("Starting evaluation operations")
   eval_metric_ops = {
     "accuracy" : tf.metrics.accuracy(
       labels=labels,
@@ -149,7 +157,6 @@ def back_prop_reg_fn(features, labels, mode):
   }
 
   return tf.estimator.EstimatorSpec(mode=mode, loss=loss, eval_metric_ops=eval_metric_ops)
-
 
 
 def main(argv):
@@ -170,7 +177,7 @@ def main(argv):
   # Create an estimator w/ regularization (l2)
   mnist_clf_reg = tf.estimator.Estimator(model_fn=back_prop_reg_fn,
     model_dir="mnist_backprop_reg")
-  
+
   # Setup training input function
   train_input_fn = tf.estimator.inputs.numpy_input_fn(
     x={"x": train_data},
@@ -184,11 +191,12 @@ def main(argv):
   eval_input_fn = tf.estimator.inputs.numpy_input_fn(
     x={"x": eval_data},
     y=eval_labels,
-    num_epochs=None,
+    num_epochs=1,
     shuffle=False
   )
 
   # Train the model w/o regularization & rounds = 50
+  print ("Training first model")
   mnist_clf_noreg.train(
     input_fn=train_input_fn,
     steps=50,
@@ -197,6 +205,7 @@ def main(argv):
   eval_results_noreg_50 = mnist_clf_noreg.evaluate(input_fn=eval_input_fn)
 
   # Train the model w/o regularization & rounds = 250
+  print ("Training second model")
   mnist_clf_noreg.train(
     input_fn=train_input_fn,
     steps=250,
@@ -205,6 +214,7 @@ def main(argv):
   eval_results_noreg_250 = mnist_clf_noreg.evaluate(input_fn=eval_input_fn)
 
   # Train the model w/ regularization & rounds = 50
+  print ("Training third model")
   mnist_clf_reg.train(
     input_fn=train_input_fn,
     steps=50,
@@ -213,6 +223,7 @@ def main(argv):
   eval_results_reg_50 = mnist_clf_reg.evaluate(input_fn=eval_input_fn)
 
   # Train the model w/ regularization & rounds = 250
+  print ("Training fourth model")
   mnist_clf_reg.train(
     input_fn=train_input_fn,
     steps=250,

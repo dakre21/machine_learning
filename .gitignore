@@ -1,3 +1,5 @@
 *.~*
 *.tar.gz
 hw3/MNIST-data/
+hw3/mnist_backprop_noreg
+hw3/mnist_backprop_reg
