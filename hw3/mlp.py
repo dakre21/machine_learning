@@ -15,6 +15,7 @@ from __future__ import print_function
 
 # Imports
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 
@@ -163,6 +164,9 @@ def main(argv):
   """
   main : main entry point functino for tensorflow
   """
+  # Forward declaration
+  results = {}
+
   # Get the training and evaluation data
   mnist = tf.contrib.learn.datasets.load_dataset("mnist")
   train_data = mnist.train.images
@@ -235,6 +239,15 @@ def main(argv):
   print(eval_results_noreg_250)
   print(eval_results_reg_50)
   print(eval_results_reg_250)
+
+  results["50HLN + no regularization + 0.01 learning rate"] = [eval_results_noreg_50["loss"], 1 - eval_results_noreg_50["accuracy"]]
+  results["50HLN + L2 regularization + 0.01 learning rate"] = [eval_results_reg_50["loss"], 1 - eval_results_reg_50["accuracy"]]
+  results["250HLN + no regularization + 0.01 learning rate"] = [eval_results_noreg_250["loss"], 1 - eval_results_noreg_250["accuracy"]]
+  results["250HLN + L2 regularization + 0.01 learning rate"] = [eval_results_reg_250["loss"], 1 - eval_results_reg_250["accuracy"]]
+
+  df = pd.DataFrame.from_dict(results, orient="index")
+  df.columns = ["Classification Training Error", "Classification Testing Error"]
+  df.to_csv("results.csv")
 
 
 if __name__ == "__main__":
