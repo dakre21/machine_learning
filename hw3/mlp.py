@@ -235,11 +235,6 @@ def main(argv):
   )
   eval_results_reg_250 = mnist_clf_reg.evaluate(input_fn=eval_input_fn)
   
-  print(eval_results_noreg_50)
-  print(eval_results_noreg_250)
-  print(eval_results_reg_50)
-  print(eval_results_reg_250)
-
   results["50HLN + no regularization + 0.01 learning rate"] = [eval_results_noreg_50["loss"], 1 - eval_results_noreg_50["accuracy"]]
   results["50HLN + L2 regularization + 0.01 learning rate"] = [eval_results_reg_50["loss"], 1 - eval_results_reg_50["accuracy"]]
   results["250HLN + no regularization + 0.01 learning rate"] = [eval_results_noreg_250["loss"], 1 - eval_results_noreg_250["accuracy"]]
