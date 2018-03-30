@@ -65,7 +65,7 @@ def main():
       o.append(tgt * src)
 
   c = [] 
-  probs = []
+  s = []
   for y in y_tgt_tr.ravel():
     tmp = 0
     for t in X_tgt_tr.T.ravel():
@@ -76,51 +76,31 @@ def main():
 
     #constraints[0] = (tmp + y * B) >= (1 - zeta)
     constraints[0] = (tmp + y) >= (1 - zeta)
-    probs.append(Problem(Minimize(n[count] + o[count]), constraints))
+    s.append(Problem(Minimize(n[count] + o[count]), constraints).solve())
     count += 1
 
-  for p in probs:
-    print p.solve()
+  x_tgt_arr = np.arange(X_tgt_tr.min(), X_tgt_tr.max())
+  x_src_arr = np.arange(X_src_tr.min(), X_src_tr.max())
+  y_tgt_arr = np.arange(X_src_tr.min(), X_src_tr.max())
+  y_src_arr = np.arange(X_src_tr.min(), X_src_tr.max())
 
+  x_tgt_grid, y_tgt_grid = np.meshgrid(x_tgt_arr, y_tgt_arr)
+  x_src_grid, y_src_grid = np.meshgrid(x_src_arr, y_src_arr)
 
+  ax = plt.subplot(2, 2, 1)
+  ax.set_title("SVM - Dual Form Training Data")
+  ax.set_xlim(x_tgt_grid.min(), x_tgt_grid.max())
+  ax.set_ylim(y_tgt_grid.min(), y_tgt_grid.max())
+  ax.scatter(X_tgt_tr[:,0], X_tgt_tr[:,1], c=y_tgt_tr, cmap=cm_bright, alpha=0.8)
 
-  """
-  eq1 = 0.5 * norm(X_tgt_tr, 2)
-  eq2 = C * sum_entries(zeta)
-  eq3 = B * np.outer(X_tgt_tr.T.ravel(), X_src_tr.ravel())
-  exp_tr = eq1 + eq2 - eq3
-  prob_tr = Problem(Minimize(exp_tr), X_tgt_tr.ravel())
-  """
+  ax = plt.subplot(2, 2, 2)
+  ax.set_title("SVM - Dual Form Training Data")
+  ax.set_xlim(x_src_grid.min(), x_src_grid.max())
+  ax.set_ylim(y_src_grid.min(), y_src_grid.max())
+  ax.scatter(X_src_tr[:,0], X_src_tr[:,1], c=y_src_tr, cmap=cm_bright, alpha=0.8)
 
-  """
-  #alpha = Variable()
-  alpha = Parameter(sign="positive")
+  plt.show()
 
-  mul_one = np.outer(X_src_tr.ravel(), y_src_tr.ravel())
-  mul_two = np.outer(y_tgt_tr.ravel(), X_tgt_tr.T.ravel())
-  prod = np.outer(mul_one, mul_two)
-  df_tr_one = alpha * (1 - mul_elemwise(B, prod))
-  #df_tr_one = alpha * (1 - B * prod)
-
-  mul_one = np.outer(y_tgt_tr.ravel(), X_tgt_tr.ravel())
-  mul_two = np.outer(y_tgt_tr.ravel(), X_tgt_tr.T.ravel())
-  prod = np.outer(mul_one, mul_two)
-  df_tr_two = 0.5 * sum_entries(sum_entries(mul_elemwise(alpha, alpha * prod)))
-  #df_tr_two = 0.5 * sum_entries(sum_entries(alpha * alpha * prod))
-
-  mul_one = np.outer(X_src_tst.ravel(), y_src_tst.ravel())
-  mul_two = np.outer(y_tgt_tst.ravel(), X_tgt_tst.T.ravel())
-  prod = np.dot(mul_one, mul_two)
-  df_tst_one = alpha * (1 - mul_elemwise(B, prod))
-  #df_tst_one = alpha * (1 - B * prod)
-
-  mul_one = np.outer(y_tgt_tst.ravel(), X_tgt_tst.ravel())
-  mul_two = np.outer(y_tgt_tst.ravel(), X_tgt_tst.T.ravel())
-  prod = mul_one * mul_two
-  df_tst_one = alpha * (1 - mul_elemwise(B, prod))
-  df_tr_two = 0.5 * sum_entries(sum_entries(mul_elemwise(alpha, alpha * prod)))
-  #df_tst_two = 0.5 * sum_entries(sum_entries(alpa * alpha * prod))
-  """
 
 if __name__ == "__main__":
   main()  
