@@ -31,12 +31,12 @@ def main():
   dataset = pd.read_csv(source_test)
   X_src_tst = dataset.values[:,:-1]
   y_src_tst = dataset.values[:,-1]
- 
+
   # Read tgt tr
   dataset = pd.read_csv(target_train)
   X_tgt_tr = dataset.values[:,:-1]
   y_tgt_tr = dataset.values[:,-1]
- 
+
   # Read tft tst
   dataset = pd.read_csv(target_test)
   X_tgt_tst = dataset.values[:,:-1]
@@ -45,18 +45,38 @@ def main():
   # Setup cvx variables for dual form SVM
   C = Parameter(sign="positive") 
   B = Parameter(sign="positive")
+  alpha = Variable()
   zeta = Variable()
-  reg_tr = 0.5 * norm(X_tgt_tr, 2)
-  reg_tst = 0.5 * norm(X_tgt_tst, 2)
-  loss = C * sum_entries(zeta)
-  adapt_tr = B * X_tgt_tr * X_src_tr
-  adapt_tst = B * X_tgt_tst * X_src_tst
+
+  mul_one = np.outer(X_src_tr.ravel(), y_src_tr.ravel())
+  mul_two = np.outer(y_tgt_tr.ravel(), X_tgt_tr.T.ravel())
+  prod = np.outer(mul_one, mul_two)
+  df_tr_one = alpha * (1 - B * prod)
+
+  mul_one = np.outer(y_tgt_tr.ravel(), X_tgt_tr.ravel())
+  mul_two = np.outer(y_tgt_tr.ravel(), X_tgt_tr.T.ravel())
+  prod = np.outer(mul_one, mul_two)
+  df_tr_two = 0.5 * sum_entries(sum_entries(alpha * alpha * prod))
+
+  mul_one = np.outer(X_src_tr.ravel(), y_src_tr.ravel())
+  mul_two = np.outer(y_tgt_tr.ravel(), X_tgt_tr.T.ravel())
+  prod = np.outer(mul_one, mul_two)
+  df_tst_one = alpha * (1 - B * prod)
+
+  mul_one = np.outer(y_tgt_tst.ravel(), X_tgt_tst.ravel())
+  mul_two = np.outer(y_tgt_tst.ravel(), X_tgt_tst.T.ravel())
+  prod = np.outer(mul_one, mul_two)
+  df_tst_two = 0.5 * sum_entries(sum_entries(alpa * alpha * prod))
 
   # Minimize Training Data
-  prob_tr = Problem(Minimize(reg_tr + loss + adapt_tr))
+  prob_tr = Problem(Minimize(df_tr_one - df_tr_two))
 
   # Minimize Testing Data
-  prob_tr = Problem(Minimize(reg_tr + loss + adapt_tr))
+  prob_tst = Problem(Minimize(df_tst_one - df_tst_two))
+
+  # Solve each problem
+  print prob_tr.solve()
+  print prob_tst.solve()
 
 
 if __name__ == "__main__":
