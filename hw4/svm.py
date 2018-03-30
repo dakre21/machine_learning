@@ -87,17 +87,75 @@ def main():
   x_tgt_grid, y_tgt_grid = np.meshgrid(x_tgt_arr, y_tgt_arr)
   x_src_grid, y_src_grid = np.meshgrid(x_src_arr, y_src_arr)
 
-  ax = plt.subplot(2, 2, 1)
-  ax.set_title("SVM - Dual Form Training Data")
+  ax = plt.subplot(2, 3, 1)
+  ax.set_title("SVM Target (Training Data)")
   ax.set_xlim(x_tgt_grid.min(), x_tgt_grid.max())
   ax.set_ylim(y_tgt_grid.min(), y_tgt_grid.max())
   ax.scatter(X_tgt_tr[:,0], X_tgt_tr[:,1], c=y_tgt_tr, cmap=cm_bright, alpha=0.8)
 
-  ax = plt.subplot(2, 2, 2)
-  ax.set_title("SVM - Dual Form Training Data")
+  ax = plt.subplot(2, 3, 2)
+  ax.set_title("SVM Source (Traning Data)")
   ax.set_xlim(x_src_grid.min(), x_src_grid.max())
   ax.set_ylim(y_src_grid.min(), y_src_grid.max())
   ax.scatter(X_src_tr[:,0], X_src_tr[:,1], c=y_src_tr, cmap=cm_bright, alpha=0.8)
+
+  ax = plt.subplot(2, 3, 3)
+  ax.set_title("SVM Dual Form Results (Traning Data)")
+  ax.set_xlim(x_src_grid.min(), x_src_grid.max())
+  ax.set_ylim(y_src_grid.min(), y_src_grid.max())
+  ax.scatter(X_tgt_tr[:,0], s, linestyle='--', cmap=cm_bright, alpha=0.8)
+
+  # Testing Data
+  n = []
+  for tgt in X_tgt_tst.ravel():
+    n.append(0.5 * norm(tgt, 2))
+
+  o = []
+  for tgt in X_tgt_tst.ravel().T:
+    for src in X_src_tst.ravel():
+      #o.append(B * tgt * src)
+      o.append(tgt * src)
+
+  c = [] 
+  s = []
+  for y in y_tgt_tst.ravel():
+    tmp = 0
+    for t in X_tgt_tst.T.ravel():
+      tmp = y * t
+
+    for x in X_tgt_tst.ravel():
+      tmp *= x
+
+    #constraints[0] = (tmp + y * B) >= (1 - zeta)
+    constraints[0] = (tmp + y) >= (1 - zeta)
+    s.append(Problem(Minimize(n[count] + o[count]), constraints).solve())
+    count += 1
+
+  x_tgt_arr = np.arange(X_tgt_tst.min(), X_tgt_tst.max())
+  x_src_arr = np.arange(X_src_tst.min(), X_src_tst.max())
+  y_tgt_arr = np.arange(X_src_tst.min(), X_src_tst.max())
+  y_src_arr = np.arange(X_src_tst.min(), X_src_tst.max())
+
+  x_tgt_grid, y_tgt_grid = np.meshgrid(x_tgt_arr, y_tgt_arr)
+  x_src_grid, y_src_grid = np.meshgrid(x_src_arr, y_src_arr)
+
+  ax = plt.subplot(2, 3, 4)
+  ax.set_title("SVM Target (Testing Data)")
+  ax.set_xlim(x_tgt_grid.min(), x_tgt_grid.max())
+  ax.set_ylim(y_tgt_grid.min(), y_tgt_grid.max())
+  ax.scatter(X_tgt_tst[:,0], X_tgt_tst[:,1], c=y_tgt_tst, cmap=cm_bright, alpha=0.8)
+
+  ax = plt.subplot(2, 3, 5)
+  ax.set_title("SVM Source (Testing Data)")
+  ax.set_xlim(x_src_grid.min(), x_src_grid.max())
+  ax.set_ylim(y_src_grid.min(), y_src_grid.max())
+  ax.scatter(X_src_tst[:,0], X_src_tst[:,1], c=y_src_tst, cmap=cm_bright, alpha=0.8)
+
+  ax = plt.subplot(2, 3, 6)
+  ax.set_title("SVM Dual Form Results (Testing Data)")
+  ax.set_xlim(x_src_grid.min(), x_src_grid.max())
+  ax.set_ylim(y_src_grid.min(), y_src_grid.max())
+  ax.scatter(X_tgt_tst[:,0], s, linestyle='--', cmap=cm_bright, alpha=0.8)
 
   plt.show()
 
