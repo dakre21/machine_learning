@@ -45,39 +45,82 @@ def main():
   # Setup cvx variables for dual form SVM
   C = Parameter(sign="positive") 
   B = Parameter(sign="positive")
-  alpha = Variable()
   zeta = Variable()
+  count = 0
+
+  # Training data
+  constraints = [
+    zeta >= 0,
+    zeta >= 0  
+  ]
+
+  n = []
+  for tgt in X_tgt_tr.ravel():
+    n.append(0.5 * norm(tgt, 2))
+
+  o = []
+  for tgt in X_tgt_tr.ravel().T:
+    for src in X_src_tr.ravel():
+      #o.append(B * tgt * src)
+      o.append(tgt * src)
+
+  c = [] 
+  probs = []
+  for y in y_tgt_tr.ravel():
+    tmp = 0
+    for t in X_tgt_tr.T.ravel():
+      tmp = y * t
+
+    for x in X_tgt_tr.ravel():
+      tmp *= x
+
+    #constraints[0] = (tmp + y * B) >= (1 - zeta)
+    constraints[0] = (tmp + y) >= (1 - zeta)
+    probs.append(Problem(Minimize(n[count] + o[count]), constraints))
+    count += 1
+
+  for p in probs:
+    print p.solve()
+
+
+
+  """
+  eq1 = 0.5 * norm(X_tgt_tr, 2)
+  eq2 = C * sum_entries(zeta)
+  eq3 = B * np.outer(X_tgt_tr.T.ravel(), X_src_tr.ravel())
+  exp_tr = eq1 + eq2 - eq3
+  prob_tr = Problem(Minimize(exp_tr), X_tgt_tr.ravel())
+  """
+
+  """
+  #alpha = Variable()
+  alpha = Parameter(sign="positive")
 
   mul_one = np.outer(X_src_tr.ravel(), y_src_tr.ravel())
   mul_two = np.outer(y_tgt_tr.ravel(), X_tgt_tr.T.ravel())
   prod = np.outer(mul_one, mul_two)
-  df_tr_one = alpha * (1 - B * prod)
+  df_tr_one = alpha * (1 - mul_elemwise(B, prod))
+  #df_tr_one = alpha * (1 - B * prod)
 
   mul_one = np.outer(y_tgt_tr.ravel(), X_tgt_tr.ravel())
   mul_two = np.outer(y_tgt_tr.ravel(), X_tgt_tr.T.ravel())
   prod = np.outer(mul_one, mul_two)
-  df_tr_two = 0.5 * sum_entries(sum_entries(alpha * alpha * prod))
+  df_tr_two = 0.5 * sum_entries(sum_entries(mul_elemwise(alpha, alpha * prod)))
+  #df_tr_two = 0.5 * sum_entries(sum_entries(alpha * alpha * prod))
 
-  mul_one = np.outer(X_src_tr.ravel(), y_src_tr.ravel())
-  mul_two = np.outer(y_tgt_tr.ravel(), X_tgt_tr.T.ravel())
-  prod = np.outer(mul_one, mul_two)
-  df_tst_one = alpha * (1 - B * prod)
+  mul_one = np.outer(X_src_tst.ravel(), y_src_tst.ravel())
+  mul_two = np.outer(y_tgt_tst.ravel(), X_tgt_tst.T.ravel())
+  prod = np.dot(mul_one, mul_two)
+  df_tst_one = alpha * (1 - mul_elemwise(B, prod))
+  #df_tst_one = alpha * (1 - B * prod)
 
   mul_one = np.outer(y_tgt_tst.ravel(), X_tgt_tst.ravel())
   mul_two = np.outer(y_tgt_tst.ravel(), X_tgt_tst.T.ravel())
-  prod = np.outer(mul_one, mul_two)
-  df_tst_two = 0.5 * sum_entries(sum_entries(alpa * alpha * prod))
-
-  # Minimize Training Data
-  prob_tr = Problem(Minimize(df_tr_one - df_tr_two))
-
-  # Minimize Testing Data
-  prob_tst = Problem(Minimize(df_tst_one - df_tst_two))
-
-  # Solve each problem
-  print prob_tr.solve()
-  print prob_tst.solve()
-
+  prod = mul_one * mul_two
+  df_tst_one = alpha * (1 - mul_elemwise(B, prod))
+  df_tr_two = 0.5 * sum_entries(sum_entries(mul_elemwise(alpha, alpha * prod)))
+  #df_tst_two = 0.5 * sum_entries(sum_entries(alpa * alpha * prod))
+  """
 
 if __name__ == "__main__":
   main()  
