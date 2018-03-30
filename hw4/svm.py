@@ -42,6 +42,22 @@ def main():
   X_tgt_tst = dataset.values[:,:-1]
   y_tgt_tst = dataset.values[:,-1]
 
+  # Setup cvx variables for dual form SVM
+  C = Parameter(sign="positive") 
+  B = Parameter(sign="positive")
+  zeta = Variable()
+  reg_tr = 0.5 * norm(X_tgt_tr, 2)
+  reg_tst = 0.5 * norm(X_tgt_tst, 2)
+  loss = C * sum_entries(zeta)
+  adapt_tr = B * X_tgt_tr * X_src_tr
+  adapt_tst = B * X_tgt_tst * X_src_tst
+
+  # Minimize Training Data
+  prob_tr = Problem(Minimize(reg_tr + loss + adapt_tr))
+
+  # Minimize Testing Data
+  prob_tr = Problem(Minimize(reg_tr + loss + adapt_tr))
+
 
 if __name__ == "__main__":
   main()  
