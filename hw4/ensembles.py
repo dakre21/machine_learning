@@ -32,7 +32,7 @@ def read_data(file_path="data/"):
     y.append(dataset[count].values[:,-1])
     count += 1
 
-  return len(files)
+  return files
 
 
 if __name__ == "__main__":
@@ -43,12 +43,15 @@ if __name__ == "__main__":
   size      = 2 
 
   # Step 1 - Read in the data
-  file_count = read_data()
+  files = read_data()
 
   # Setup plot
   plt.figure(figsize=(20, 10))
+  plt.suptitle("Testing Error Sweeping N from 2 to 9 - AdaBoost vs Bagging")
 
-  for i in range(file_count):
+  print "X-Axis Identifier"
+  for i in range(len(files)):
+    print "x = " + str(i) + " coordinates with " + files[i]
     x_axis.append(i)
 
   # One to one ratio (X to Y)
@@ -60,7 +63,7 @@ if __name__ == "__main__":
     ada_err = []
     bag_err = []
     # Step 3 - Gather testing error
-    for j in range(file_count):
+    for j in range(len(files)):
       # Step 3(a) - Apply AdaBoosting 
       clf = AdaBoostClassifier(n_estimators = size).fit(X[j], y[j])
       ada_err.append(1-clf.score(X[j], y[j]))

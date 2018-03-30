@@ -21,6 +21,9 @@ def main():
   target_train = "svm_data/target_train.csv"
   cm_bright    = ListedColormap(['red', 'blue'])
 
+  # Step 0 - Setup plot
+  plt.figure(figsize=(20, 10))
+
   # Step 1 - Read data
   # Read src tr
   dataset = pd.read_csv(source_train)
