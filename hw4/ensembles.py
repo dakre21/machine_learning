@@ -22,6 +22,7 @@ X       = []
 y       = []
 
 def read_data(file_path="data/"):
+  # Forward decls
   count = 0
   files = listdir(file_path)
 
