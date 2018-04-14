@@ -55,26 +55,24 @@ if __name__ == "__main__":
     # Perform KFold Crossing
     kf = KFold(n_splits = 5).split(X[i])
     for test, train in kf:
-        sup_len = int(0.15 * len(X[i]))
-        tmp_un_x = []
-        tmp_un_y = []
-        tmp_sup_x = []
-        tmp_sup_y = []
+        sup_len = int(0.15 * len(X[i][train]))
+        tmp_un_x = np.zeros(0)
+        tmp_un_y = np.zeros(0)
+        tmp_sup_x = np.zeros(0)
+        tmp_sup_y = np.zeros(0)
 
         # Train 15% of labeled data (random)
         index = randint(0, len(X[i]) - sup_len)
         for j in range(len(X[i])):
           if index <= j <= index + sup_len:
-            tmp_sup_x.append(X[i][j])
-            tmp_sup_y.append(X[i][j])
+            tmp_sup_x = np.append(tmp_sup_x, X[i][j])
+            tmp_sup_y = np.append(tmp_sup_y, X[i][j])
 
-          tmp_un_x.append(X[i][j])
-          tmp_un_y.append(y[i][j])
+          tmp_un_x = np.append(tmp_un_x, (X[i][j]))
+          tmp_un_y = np.append(tmp_un_y, (y[i][j]))
 
-        #clf = GaussianNB().fit(np.array(tmp_sup_x).ravel(), np.array(tmp_sup_y).ravel())
-        print X[i][train]
-        clf = GaussianNB().fit(X[i][test], y[i][test])
-        score_sup += cross_val_score(clf, tmp_sup_x, tmp_sup_y)
+        clf = GaussianNB().fit(X[i][train], y[i][train])
+        score_sup += cross_val_score(clf, [tmp_sup_x], [tmp_sup_y])
 
         # Make predictions on the remaining unlabeled data
         clf = KNeighborsClassifier(n_neighbors = 5).fit(tmp_un_x, tmp_un_y)
