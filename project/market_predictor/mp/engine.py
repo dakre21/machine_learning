@@ -6,7 +6,7 @@ Title: Market Predictor Engine
 
 import numpy as np
 import pandas as pd
-from market_predict.mp.data_controller import DataController
+from market_predictor.mp.data_controller import DataController
 
 class Engine:
   """

@@ -63,7 +63,7 @@ def main(model, interval, config_path, data_path):
 
   # First validate core user arguments
   if validate_inputs(model, interval, models, intervals) != True:
-    print "Error in the inputs, please run market_predict --help"
+    print "Error in the inputs, please run market_predictor --help"
     return
 
   # Second read configuration file
