@@ -58,7 +58,7 @@ if __name__ == "__main__":
     tmp_sup_y = np.zeros(0)
 
     # Log file
-    print "*******************************************"
+    print "**********************************************"
     print "File: " + files[i]
 
     # Train 15% of labeled data (random)
@@ -79,29 +79,23 @@ if __name__ == "__main__":
     tmp_sup_x = np.reshape(tmp_sup_x, (len(tmp_sup_y), -1))
     kf = KFold(n_splits = 5).split(tmp_sup_x)
     for test, train in kf:
-      #clf = GaussianNB().fit(X[i][train], y[i][train])
-      #print tmp_sup_x.shape
-      #print X[i][train].shape
-      #print tmp_sup_y.shape
-      #print y[i][train].shape
-
-      clf = GaussianNB().fit(tmp_sup_x, tmp_sup_y)
-      score_sup += cross_val_score(clf, tmp_sup_x, tmp_sup_y)
+      clf = GaussianNB().fit(tmp_sup_x[train], tmp_sup_y[train])
+      score_sup += cross_val_score(clf, tmp_sup_x, tmp_sup_y)[0]
 
     # Predict unsupervised
     tmp_un_x = np.reshape(tmp_un_x, (len(tmp_un_y), -1))
     kf = KFold(n_splits = 5).split(tmp_un_x)
     for test, train in kf:
-      clf = KNeighborsClassifier(n_neighbors = 5).fit(tmp_un_x, tmp_un_y)
-      score_un += cross_val_score(clf, tmp_un_x, tmp_un_y)
+      clf = KNeighborsClassifier(n_neighbors = 5).fit(tmp_un_x[train], tmp_un_y[train])
+      score_un += cross_val_score(clf, tmp_un_x, tmp_un_y)[0]
 
     # Report accuracy for process
     score_sup = score_sup / 5
     score_un = score_un / 5
 
     # Resport results
-    print "Supervised Learning Accuracy: " + str(score_sup)
-    print "Unsupervised Learning Accuracy: " + str(score_un)
-    print "Total Semi Supervised Learning Accuracy: " + str(score_sup + score_un)
+    print "Supervised Learning Accuracy: %0.2f" % score_sup
+    print "Unsupervised Learning Accuracy: %0.2f" % score_un
+    print "Total Semi Supervised Learning Accuracy: %0.2f" % ((score_sup + score_un) / 2)
 
 
