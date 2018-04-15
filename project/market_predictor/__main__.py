@@ -6,6 +6,7 @@ Title: Market Predictor Application main
 
 import click
 import yaml
+from market_predictor import logger
 from mp.engine import Engine
 from mp.validate import validate_inputs
 

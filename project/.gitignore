@@ -1,5 +1,5 @@
 venv/
 build/
 dist/
-market_predict.egg-info/
+market_predictor.egg-info/
 config.yaml
