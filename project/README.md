@@ -5,11 +5,6 @@
 
 ## User Guide
 - Install Anaconda Python distribution 
-- Execute the following:
-  - ```conda install quandl```
-  - ```conda install click```
-  - ```conda install virtualenv```
-- Create virtualenv ```virtualenv venv```
-- Source virtualenv environment ```source venv/bin/activate```
-- To run simply do ```market_predict <arguments>```
+- To run simply do ```market_predictor <arguments>```
+  - For example: ```market_predictor -m "SVM" -t "day" -c "example_config.yaml"```
   - For help on execution pass in the "--help or -h" flag to the python script

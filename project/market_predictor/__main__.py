@@ -18,10 +18,11 @@ models = [
   "Neural Network"
 ]
 intervals = [
-  "day",
-  "week",
-  "month",
-  "year"
+  "daily",
+  "weekly",
+  "monthly",
+  "quarterly",
+  "annual"
 ]
 
 
@@ -35,12 +36,16 @@ def _read_config(config_path):
   rc = True
   global config
 
-  with open(config_path, 'r') as data:
-    try:
-      config = yaml.load(data)
-    except yaml.YAMLError as exc:
-      rc = False
-      print exc
+  try:
+    with open(config_path, 'r') as data:
+      try:
+        config = yaml.load(data)
+      except yaml.YAMLError as exc:
+        rc = False
+        logger.error(exc)
+  except IOError as exc:
+    rc = False
+    logger.error(exc)
 
   return rc
 
@@ -63,13 +68,13 @@ def main(model, interval, config_path, data_path):
 
   # First validate core user arguments
   if validate_inputs(model, interval, models, intervals) != True:
-    print "Error in the inputs, please run market_predictor --help"
+    logger.error("Error in the inputs, please run market_predictor --help")
     return
 
   # Second read configuration file
   if _read_config(config_path) != True:
-    print "Error while reading the configuration yaml file. Please provide "\
-            "a valid one... follow example_config.yaml in project"
+    logger.error("Error while reading the configuration yaml file. Please provide "\
+            "a valid one... follow example_config.yaml in project")
     return 
 
   eng = Engine(model, interval, config, data_path)
