@@ -1,0 +1,3 @@
+[console_scripts]
+market_predict = market_predict.__main__:main
+
