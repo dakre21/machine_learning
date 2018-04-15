@@ -13,6 +13,7 @@ from os import listdir
 from random import randint
 import numpy as np
 import pandas as pd
+from sklearn.semi_supervised import LabelPropagation
 from sklearn.model_selection import KFold, cross_val_score
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
@@ -46,6 +47,10 @@ if __name__ == "__main__":
   # Step 1 - Read in the data
   files = read_data()
 
+  # Create random var & label prop model
+  rng = np.random.RandomState(42)
+  label_prop_model = LabelPropagation()
+  
   # Step 2 - For each data set perform self-training
   for i in range(len(files)):
     # Initialize scores
@@ -56,6 +61,12 @@ if __name__ == "__main__":
     tmp_un_y = np.zeros(0)
     tmp_sup_x = np.zeros(0)
     tmp_sup_y = np.zeros(0)
+
+    # Generate some randomness to our label/unlabel split from created data
+    random_unlabeled_points = rng.rand(len(y[i])) < 0.1
+    labels = np.copy(y[i])
+    labels[random_unlabeled_points] = -1
+    label_prop_model.fit(X[i], labels)
 
     # Log file
     print "**********************************************"
