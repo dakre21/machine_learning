@@ -2,4 +2,4 @@ venv/
 build/
 dist/
 market_predict.egg-info/
-keys.env
+config.yaml
