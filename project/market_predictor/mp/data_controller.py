@@ -18,8 +18,8 @@ class DataController:
     self.interval = interval
     self.vix_sym  = vix_sym
     self.sp_sym   = sp_sym
-    self.vix_data = np.array()
-    self.sp_data  = np.array()
+    self.vix_data = np.zeros(0)
+    self.sp_data  = np.zeros(0)
 
 
   def __del__(self):
@@ -33,7 +33,9 @@ class DataController:
     """
     self.sp_data = qd.get(self.sp_sym, collapse=self.interval, 
             returns="numpy")
+    print self.sp_data
     self.vix_data = qd.get(self.vix_sym, collapse=self.interval, 
             returns="numpy")
+    print self.vix_data
 
 
