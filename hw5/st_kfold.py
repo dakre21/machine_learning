@@ -1,6 +1,6 @@
 """
 Author: David Akre
-Date: 3/29/18
+Date: 4/4/18
 Title: Self-Training KFold Crossing
 Description: This python script will perform the following:
 1) Perform self-training on 15% of the data (labeled/unlabeled) 
