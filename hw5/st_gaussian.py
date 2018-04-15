@@ -11,7 +11,33 @@ import pandas as pd
 from sklearn.semi_supervised import LabelPropagation
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import make_blobs
-from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+
+def self_train(Xtr, labels, random_unlabeled_points):
+  # Forward declaration
+  err    = 0
+  count  = 0
+  labels = np.split(labels, 5)
+
+  # Split training data into 5 chunks to iterate through for self-training
+  for x in np.split(Xtr, 5):
+    clf = GaussianNB().fit(x, labels[count])
+    err += 1 - clf.score(x, labels[count])
+
+    if count == 0:
+      print "Error at the first pass through - %0.2f" % err
+
+    clf = KNeighborsClassifier(n_neighbors = 5).fit(x, labels[count])
+    err += 1 - clf.score(x, labels[count])
+
+    if count == 3:
+      print "Error half way through - %0.2f" % (err / 6)
+
+    count += 1
+
+  return err
+
 
 def gen_data():
   """
@@ -25,17 +51,35 @@ def gen_data():
 
 
 if __name__ == "__main__":
-  # Step 1 - Generate 2D Gaussian and split into test and training data
+  # Part 1 - 10% labeled
+  # Generate 2D Gaussian and split into test and training data
   X, y, Xtr, Xtst, ytr, ytst = gen_data()
 
-  # Generate some randomness to our label/unlabel split from created data
+  print "Part 1 - Error of self training algorithm with 10% of the data labeled"
+
+  # Generate some randomness to our label/unlabel split from created data (%10)
   rng = np.random.RandomState(42)
-  random_unlabeled_points = rng.rand(len(ytr)) < 0.3
+  random_unlabeled_points = rng.rand(len(ytr)) < 0.9
   label_prop_model = LabelPropagation()
   labels = np.copy(ytr)
   labels[random_unlabeled_points] = -1
   label_prop_model.fit(Xtr, labels)
 
-  # Split training data into 5 chunks to iterate through for self-training
-  for x in np.split(Xtr, 5):
-    print x
+  err = self_train(Xtr, labels, random_unlabeled_points)
+  print "Error at the end - %0.2f" % (err / 10)
+
+  # Part 2 - 25% labeled
+  # Generate 2D Gaussian and split into test and training data
+  X, y, Xtr, Xtst, ytr, ytst = gen_data()
+
+  print "Part 2 - Error of self training algorithm with 25% of the data labeled"
+
+  # Generate some randomness to our label/unlabel split from created data (25%)
+  random_unlabeled_points = rng.rand(len(ytr)) < 0.75
+  labels = np.copy(ytr)
+  labels[random_unlabeled_points] = -1
+  label_prop_model.fit(Xtr, labels)
+
+  err = self_train(Xtr, labels, random_unlabeled_points)
+  print "Error at the end - %0.2f" % (err / 10)
+
