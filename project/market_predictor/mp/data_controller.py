@@ -13,13 +13,10 @@ class DataController:
   the quandl API to get the market predictors data
   """
 
-  def __init__(self, interval, api_key, sp_sym, vix_sym):
-    qd.ApiConfig.api_key = api_key
+  def __init__(self, interval, config):
+    qd.ApiConfig.api_key = config['API_KEY']
     self.interval = interval
-    self.vix_sym  = vix_sym
-    self.sp_sym   = sp_sym
-    self.vix_data = np.zeros(0)
-    self.sp_data  = np.zeros(0)
+    self.config   = config
 
 
   def __del__(self):
@@ -29,13 +26,30 @@ class DataController:
   def get_data(self):
     """
     get_data(self): Is a function that will retrieve market data for
-    the VIX and S&P500 index for a specific interval
+    SYM ONE and TWO
     """
-    self.sp_data = qd.get(self.sp_sym, collapse=self.interval, 
-            returns="numpy")
-    print self.sp_data
-    self.vix_data = qd.get(self.vix_sym, collapse=self.interval, 
-            returns="numpy")
-    print self.vix_data
+    # Forward declaration
+    attrs = []
+
+    # Fetch market data
+    sym_one_data = qd.get(self.config['SYM_ONE'], collapse=self.interval) 
+    sym_two_data = qd.get(self.config['SYM_TWO'], collapse=self.interval)
+
+    # Update data frame to include user defined col attributes
+    for e in self.config:
+      if "SYM_ONE_ATTR" in e:
+        attrs.append(self.config[e])
+
+    sym_one_data = sym_one_data[attrs]
+
+    attrs = []
+    for e in self.config:
+      if "SYM_TWO_ATTR" in e:
+        attrs.append(self.config[e])
+
+    sym_two_data = sym_two_data[attrs]
+
+    print sym_one_data
+    print sym_two_data
 
 

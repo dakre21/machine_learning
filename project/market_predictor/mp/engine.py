@@ -15,10 +15,8 @@ class Engine:
   """
 
   def __init__(self, model, interval, config, data_path):
-    self.dc = DataController(interval, config["API_KEY"], 
-            config["SPX_SYMBOL"], config["VIX_SYMBOL"])
+    self.dc = DataController(interval, config)
     self.model       = model
-    self.config      = config
     self.data_path   = data_path
 
 
