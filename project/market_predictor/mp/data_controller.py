@@ -9,11 +9,11 @@ import numpy as np
 from sklearn import preprocessing
 
 # Define String Constants
-SYM_ONE = 'SYM_ONE'
-SYM_TWO = 'SYM_TWO'
-ATTR    = '_ATTR'
-API_KEY = 'API_KEY'
-LABEL   = '_LABEL'
+SYM_ONE    = 'SYM_ONE'
+SYM_TWO    = 'SYM_TWO'
+API_KEY    = 'API_KEY'
+LABEL      = '_LABEL'
+START_DATE = "START_DATE"
 
 class DataController:
   """
@@ -43,22 +43,42 @@ class DataController:
     close_two = ""
 
     # Fetch market data
-    sym_one_data = qd.get(self.config[SYM_ONE], collapse=self.interval) 
-    sym_two_data = qd.get(self.config[SYM_TWO], collapse=self.interval)
+    sym_one_data = qd.get(self.config[SYM_ONE], start_date=self.config[START_DATE], \
+            collapse=self.interval) 
+    sym_two_data = qd.get(self.config[SYM_TWO], start_date=self.config[START_DATE], \
+            collapse=self.interval)
 
-    # Update data frame to include user defined col attributes
+    # Update data frame to include user defined col attributes and drop nan elements
     for e in self.config:
-      if SYM_ONE + ATTR in e:
+      if SYM_ONE + LABEL in e:
         attrs.append(self.config[e])
 
     sym_one_data = sym_one_data[attrs]
+    sym_one_data = sym_one_data[np.isfinite(sym_one_data[self.config[SYM_ONE+LABEL]])]
 
     attrs = []
     for e in self.config:
-      if SYM_TWO + ATTR in e:
+      if SYM_TWO + LABEL in e:
         attrs.append(self.config[e])
 
     sym_two_data = sym_two_data[attrs]
+    sym_two_data = sym_two_data[np.isfinite(sym_two_data[self.config[SYM_TWO+LABEL]])]
+
+    print sym_one_data
+    print sym_two_data
+    print sym_one_data.size
+    print sym_two_data.size
+
+    # Synchronize both data frames
+    """
+    for i, r in sym_one_data.iterrows():
+      for ii, rr in sym_two_data.iterrows():
+        if i is not ii:
+          print i
+          print ii
+          sym_one_data.drop(sym_one_data.index[i])
+
+      break
 
     # Create label on close data
     sym_one_data_new = sym_one_data
@@ -90,5 +110,6 @@ class DataController:
     y_two = np.array(sym_two_data.drop([self.config[SYM_TWO+LABEL]]))
 
     return X_one, X_two, y_one, y_two, sym_one_data, sym_two_data
+    """
 
 
