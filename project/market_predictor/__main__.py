@@ -56,11 +56,13 @@ def _read_config(config_path):
         + str(models), required=True)
 @click.option('-t', '--interval', help='Available options are: '
         + str(intervals), required=True)
+@click.option('-f', '--forecast', help='Provide a forecast (e.g. 1 unit of time) ',
+        default=1, required=True)
 @click.option('-c', '--config_path', help='Provide a path to the config file',
-        required=True)
+        default="config.yaml", required=True)
 @click.option('-d', '--data_path', help='Provide a path to a data directory',
         required=False)
-def main(model, interval, config_path, data_path):
+def main(model, interval, forecast, config_path, data_path):
   """
   main() : Main entry point for the market predictor application.
   User must provide a model, an appropriate timing interval, and env path
@@ -78,7 +80,7 @@ def main(model, interval, config_path, data_path):
             "a valid one... follow example_config.yaml in project")
     return 
 
-  eng = Engine(model, interval, config, data_path)
+  eng = Engine(model, interval, forecast, config, data_path)
   eng.predict()
 
 

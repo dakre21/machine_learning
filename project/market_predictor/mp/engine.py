@@ -14,8 +14,8 @@ class Engine:
   market predictor application
   """
 
-  def __init__(self, model, interval, config, data_path):
-    self.dc = DataController(interval, config)
+  def __init__(self, model, interval, forecast, config, data_path):
+    self.dc = DataController(interval, forecast, config)
     self.model       = model
     self.data_path   = data_path
 
@@ -26,7 +26,7 @@ class Engine:
 
   def predict(self):
     # Step 1 - Get data for S&P and VIX
-    self.dc.get_data()
+    X_one, X_two, y_one, y_two, sym_one_data, sym_two_data = self.dc.get_data()
 
     # Step 2 - Split data into train and test
 
