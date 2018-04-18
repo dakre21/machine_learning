@@ -6,6 +6,8 @@ Title: Market Predictor Data Controller
 
 import quandl as qd
 import numpy as np
+import pandas as pd
+from datetime import datetime, timedelta
 from sklearn import preprocessing
 
 # Define String Constants
@@ -30,13 +32,6 @@ class DataController:
 
   def __del__(self):
     pass
-
-
-  def _forecast(self, X, nc, y=None):
-    """
-    _forecast(self, X, nc, y=None): Is a private function that will extend the
-    data frame to the forecasted amount
-    """
 
 
   def get_data(self):
@@ -105,31 +100,24 @@ class DataController:
       else:
         count += 1
 
+    # Setup Forecast 
+    tomorrow = datetime.now() + timedelta(1)
+    one = np.array(pd.date_range(tomorrow, periods=self.forecast))
+    two = np.array(pd.date_range(tomorrow, periods=self.forecast))
+
+    one = [pd.Timestamp(x) for x in one]
+    two = [pd.Timestamp(x) for x in two]
+
+    dates_one = np.append(dates_one, one)
+    dates_two = np.append(dates_two, two)
+
+    vals_one = np.append(vals_one, np.repeat(np.nan, self.forecast))
+    vals_two = np.append(vals_two, np.repeat(np.nan, self.forecast))
+
     X_one = np.vstack((dates_one, vals_one)).T
     X_two = np.vstack((dates_two, vals_two)).T
 
-    print X_one
-    print X_two
-
-    #sym_two_data = sym_two_data[np.isfinite(sym_two_data[self.config[SYM_TWO+LABEL]])]
-    #sym_one_data = sym_one_data[np.isfinite(sym_one_data[self.config[SYM_ONE+LABEL]])]
-
-    """
-    r, c = X_one.shape
-    rr, cc = X_two.shape
-
-    print X_one
-    print X_two
-
-    print one
-    print two
-
-    if r != rr:
-      logger.error("The data sizes from each symbol do not match sym_one %d != sym_two %d" \
-              %r %rr)
-      return 
-
-    self._forecast(X_one, r)
-    """
+    print X_one.size
+    print X_two.size
 
 

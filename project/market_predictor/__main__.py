@@ -12,11 +12,8 @@ from mp.validate import validate_inputs
 
 # Global declarations
 models = [
-  "SVM",
-  "Naive Bayes",
-  "KNN",
-  "Logistic Regression",
-  "Neural Network"
+  "LR",
+  "RNN"
 ]
 intervals = [
   "daily",
@@ -25,7 +22,6 @@ intervals = [
   "quarterly",
   "annual"
 ]
-
 
 def _read_config(config_path):
   """
