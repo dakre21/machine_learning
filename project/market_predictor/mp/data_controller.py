@@ -47,6 +47,10 @@ class DataController:
     # Forward declaration
     close_one = ""
     close_two = ""
+    count     = 0
+
+    # Couple of globals
+    global dates_one, dates_two, vals_one, vals_two
 
     # Fetch market data
     sym_one_data = qd.get(self.config[SYM_ONE], start_date=self.config[START_DATE], \
@@ -55,19 +59,41 @@ class DataController:
             collapse=self.interval)
     sym_one_data = sym_one_data[self.config[SYM_ONE+LABEL]]
     sym_two_data = sym_two_data[self.config[SYM_TWO+LABEL]]
-    #print sym_one_data
-    #print sym_two_data
 
+    """
     dates_one = np.array(sym_one_data.index.tolist())
     dates_two = np.array(sym_two_data.index.tolist())
     vals_one  = np.array(sym_one_data.values.tolist())
     vals_two  = np.array(sym_two_data.values.tolist())
+    """
+
+    dates_one = sym_one_data.index.tolist()
+    dates_two = sym_two_data.index.tolist()
+    vals_one  = sym_one_data.values.tolist()
+    vals_two  = sym_two_data.values.tolist()
+ 
+    dates = dates_one
+    for d_one in dates:
+      if d_one not in dates_two:
+        dates_one = np.delete(dates_one, count)
+        vals_one = np.delete(vals_one, count)
+      else:
+        count += 1
+
+    count = 0
+    dates = dates_two
+    for d_two in dates:
+      if d_two not in dates_one:
+        dates_two = np.delete(dates_two, count)
+        vals_two = np.delete(vals_two, count)
+      else:
+        count += 1
 
     X_one = np.vstack((dates_one, vals_one)).T
     X_two = np.vstack((dates_two, vals_two)).T
 
-    print X_one.size
-    print X_two.size
+    print X_one
+    print X_two
 
     #sym_two_data = sym_two_data[np.isfinite(sym_two_data[self.config[SYM_TWO+LABEL]])]
     #sym_one_data = sym_one_data[np.isfinite(sym_one_data[self.config[SYM_ONE+LABEL]])]
