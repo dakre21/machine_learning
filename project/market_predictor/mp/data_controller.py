@@ -60,17 +60,11 @@ class DataController:
     sym_one_data = sym_one_data[self.config[SYM_ONE+LABEL]]
     sym_two_data = sym_two_data[self.config[SYM_TWO+LABEL]]
 
-    """
+    # Synchronize data
     dates_one = np.array(sym_one_data.index.tolist())
     dates_two = np.array(sym_two_data.index.tolist())
     vals_one  = np.array(sym_one_data.values.tolist())
     vals_two  = np.array(sym_two_data.values.tolist())
-    """
-
-    dates_one = sym_one_data.index.tolist()
-    dates_two = sym_two_data.index.tolist()
-    vals_one  = sym_one_data.values.tolist()
-    vals_two  = sym_two_data.values.tolist()
  
     dates = dates_one
     for d_one in dates:
@@ -86,6 +80,28 @@ class DataController:
       if d_two not in dates_one:
         dates_two = np.delete(dates_two, count)
         vals_two = np.delete(vals_two, count)
+      else:
+        count += 1
+
+    count = 0
+    vals = vals_one
+    for v_one in vals:
+      if np.isnan(v_one):
+        vals_one = np.delete(vals_one, count)
+        dates_one = np.delete(dates_one, count)
+        vals_two  = np.delete(vals_two, count)
+        dates_two = np.delete(dates_two, count)
+      else:
+        count += 1
+
+    count = 0
+    vals = vals_two
+    for v_two in vals:
+      if np.isnan(v_two):
+        vals_two = np.delete(vals_two, count)
+        dates_two = np.delete(dates_two, count)
+        vals_one = np.delete(vals_one, count)
+        dates_one = np.delete(dates_one, count)
       else:
         count += 1
 
