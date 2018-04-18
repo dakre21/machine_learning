@@ -7,6 +7,7 @@ Title: Market Predictor Engine
 import numpy as np
 import pandas as pd
 from market_predictor.mp.data_controller import DataController
+from sklearn.model_selection import train_test_split
 
 class Engine:
   """
@@ -26,9 +27,15 @@ class Engine:
 
   def predict(self):
     # Step 1 - Get data for S&P and VIX
-    self.dc.get_data()
+    X, y = self.dc.get_data()
 
     # Step 2 - Split data into train and test
+    Xtr, Xtst, ytr, ytst = train_test_split(X, y, random_state=42)
+
+    print Xtr
+    print Xtst
+    print ytr
+    print ytst
 
     # Step 3 - Train model
 

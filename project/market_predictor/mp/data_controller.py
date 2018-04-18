@@ -117,7 +117,5 @@ class DataController:
     X_one = np.vstack((dates_one, vals_one)).T
     X_two = np.vstack((dates_two, vals_two)).T
 
-    print X_one.size
-    print X_two.size
-
+    return X_one, vals_one
 
