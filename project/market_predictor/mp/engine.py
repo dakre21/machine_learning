@@ -26,7 +26,7 @@ class Engine:
 
   def predict(self):
     # Step 1 - Get data for S&P and VIX
-    X_one, X_two, y_one, y_two, sym_one_data, sym_two_data = self.dc.get_data()
+    self.dc.get_data()
 
     # Step 2 - Split data into train and test
 
