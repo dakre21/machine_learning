@@ -4,6 +4,7 @@ Date: 4/15/18
 Title: Market Predictor Model Controller
 """
 
+import numpy as np
 from market_predictor import *
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
@@ -32,6 +33,7 @@ class ModelController:
     clf = None
 
     # Preprocess data
+    imp = preprocessing.Imputer()
     X = preprocessing.scale(X)
 
     # Split data into train and test
@@ -44,19 +46,10 @@ class ModelController:
     clf.fit(Xtr, ytr)
     predictions = clf.predict(Xtst)
     confidence = clf.score(Xtst, ytst)
-    print X_fc
+
+    # Forecast data now
+    X_fc = np.vstack((X, X_fc))
+    X_fc = imp.fit_transform(X_fc)
     forecast = clf.predict(X_fc)
-    print predictions
-    print "CONFIDENCE"
-    print confidence
-    print "FORECAST"
-    print forecast
-
-    # Validate model & report error to csv
-
-    # Test model & report error to csv
-
-    # Report prediction & display graph
-
 
 
