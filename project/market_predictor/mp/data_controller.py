@@ -48,47 +48,50 @@ class DataController:
     return dates
 
   
-  def _stack_data(self, vals_one, vals_two, dates):
+  def _stack_data(self, vals, dates):
     """
     _stack_data(self, vals_one, vals_two, dates) is a private function which stacks and
     transposes the lists onto an np.array
     """
     dates = self._convert_dates_to_int(dates)
-    X_one = np.column_stack((dates, vals_one))
-    X_two = np.column_stack((dates, vals_two))
+    X = np.column_stack((dates, vals))
 
-    return X_one, X_two
+    return X
 
 
-  def _forecast(self, vals_one, vals_two, dates):
+  def _forecast_data(self):
     """
     _forecast(self, vals_one, vals_two, dates) is a private function which extends 
     the dataframe out to the forcasted timeline
     """
+    # Forward declarations
+    one   = []
+    two   = []
+    dates = []
+
     # TODO: If choosing weekly, quarterly, annually etc fix this to extend by that amount
     tomorrow = datetime.now() + timedelta(1)
-    one = np.array(pd.date_range(tomorrow, periods=self.forecast))
-    two = np.array(pd.date_range(tomorrow, periods=self.forecast))
+    tmp = np.array(pd.date_range(tomorrow, periods=self.forecast))
 
-    one = [pd.Timestamp(x) for x in one]
-    dates = np.append(dates, one)
+    tmp = [pd.Timestamp(x) for x in tmp]
+    dates = np.append(dates, tmp)
 
-    vals_one = np.append(vals_one, np.repeat(np.nan, self.forecast))
-    vals_two = np.append(vals_two, np.repeat(np.nan, self.forecast))
+    fc = np.append(one, np.repeat(np.nan, self.forecast))
 
-    return vals_one, vals_two, dates
+    return fc, dates
 
 
-  def get_data_log_reg(self):
+  def get_data_sklearn(self):
     """
     get_data_log_reg(self): Is a function that will fetch data from quandl
     and forecast it for sklearn logistic regression
     """
     vals_one, vals_two, dates = self._get_data() 
-    #vals_one, vals_two, dates = self._forecast_data(vals_one, vals_two, dates)
-    X_one, X_two = self._stack_data(vals_one, vals_two, dates)
+    X_one = self._stack_data(vals_one, dates)
+    fc, dates = self._forecast_data()
+    X_fc = self._stack_data(fc, dates)
 
-    return X_one, vals_one
+    return X_one, vals_two, X_fc
 
 
   def _get_data(self):

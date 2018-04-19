@@ -6,12 +6,12 @@ logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG')
 
 # Global declarations
-LOG_REG = "LogReg"
+LIN_REG = "LinReg"
 ARIMA   = "ARIMA"
 GAM     = "GAM"
 
 models = [
-  LOG_REG,
+  LIN_REG,
   ARIMA,
   GAM
 ]

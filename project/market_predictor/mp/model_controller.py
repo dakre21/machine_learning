@@ -3,9 +3,12 @@ Author: David Akre
 Date: 4/15/18
 Title: Market Predictor Model Controller
 """
+
+from market_predictor import *
+from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import TimeSeriesSplit
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LinearRegression
 
 
 class ModelController:
@@ -21,22 +24,29 @@ class ModelController:
     pass
 
 
-  def do_log_reg(self, X, y):
+  def do_sklearn(self, X, y, X_fc, model):
     """
-    do_log_reg(self): Carries out the functionality of logistic regression
+    do_sklearn(self, X, y, X_fc, model): Carries out the functionality of sklearn
     """
+    # Forward declarations
+    clf = None
+
+    # Preprocess data
+    X = preprocessing.scale(X)
+
     # Split data into train and test
     Xtr, Xtst, ytr, ytst = train_test_split(X, y)
 
-    print Xtr
-    print Xtst
-    print ytr
-    print ytst
-
     # Train model
-    log_reg = LogisticRegression()
-    log_reg.fit(Xtr, ytr)
-    predictions = log_reg.predict(Xtst)
+    if model == LIN_REG: 
+      clf = LinearRegression()
+
+    clf.fit(Xtr, ytr)
+    predictions = clf.predict(Xtst)
+    confidence = clf.score(Xtst, ytst)
+    print predictions
+    print "CONFIDENCE"
+    print confidence
 
     # Validate model & report error to csv
 

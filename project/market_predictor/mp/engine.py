@@ -30,12 +30,13 @@ class Engine:
 
   def predict(self):
     """
-    predict(self): Core function that carries out the logic for the entire application
+    predict(self): Core function that carries out the logic for the entire 
+    application
     """
 
-    if self.model == LOG_REG:
-      X, y = self.dc.get_data_log_reg()
-      self.mc.do_log_reg(X, y)
+    if self.model == LIN_REG:
+      X, y, X_fc = self.dc.get_data_sklearn()
+      self.mc.do_sklearn(X, y, X_fc, self.model)
     elif self.model == ARIMA:
       # TODO - Implement
       pass
