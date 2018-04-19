@@ -44,9 +44,13 @@ class ModelController:
     clf.fit(Xtr, ytr)
     predictions = clf.predict(Xtst)
     confidence = clf.score(Xtst, ytst)
+    print X_fc
+    forecast = clf.predict(X_fc)
     print predictions
     print "CONFIDENCE"
     print confidence
+    print "FORECAST"
+    print forecast
 
     # Validate model & report error to csv
 

@@ -7,16 +7,11 @@ Title: Market Predictor Data Controller
 import quandl as qd
 import numpy as np
 import pandas as pd
+from market_predictor import *
 from datetime import datetime, timedelta
 from sklearn import preprocessing
 
 # Define String Constants
-SYM_ONE    = 'SYM_ONE'
-SYM_TWO    = 'SYM_TWO'
-API_KEY    = 'API_KEY'
-LABEL      = '_LABEL'
-START_DATE = "START_DATE"
-
 class DataController:
   """
   Class DataController : This class creates the interactions between
@@ -47,17 +42,6 @@ class DataController:
 
     return dates
 
-  
-  def _stack_data(self, vals, dates):
-    """
-    _stack_data(self, vals_one, vals_two, dates) is a private function which stacks and
-    transposes the lists onto an np.array
-    """
-    dates = self._convert_dates_to_int(dates)
-    X = np.column_stack((dates, vals))
-
-    return X
-
 
   def _forecast_data(self):
     """
@@ -87,11 +71,21 @@ class DataController:
     and forecast it for sklearn logistic regression
     """
     vals_one, vals_two, dates = self._get_data() 
-    X_one = self._stack_data(vals_one, dates)
-    fc, dates = self._forecast_data()
-    X_fc = self._stack_data(fc, dates)
+   
+    # Setup data for training and testing
+    dates = self._convert_dates_to_int(dates)
+    X_one = np.column_stack((dates, vals_one))
 
-    return X_one, vals_two, X_fc
+    # Setup data for plot
+    # TODO: Change this around and refactor dates to plot has actual datetimes
+    X_plt = np.column_stack((dates, vals_one, vals_two))
+
+    # Setup forecasting data
+    fc, dates = self._forecast_data()
+    dates = self._convert_dates_to_int(dates)
+    X_fc = np.column_stack((dates, fc))
+
+    return X_one, vals_two, X_fc, X_plt
 
 
   def _get_data(self):

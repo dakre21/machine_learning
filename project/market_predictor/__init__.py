@@ -6,9 +6,17 @@ logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG')
 
 # Global declarations
-LIN_REG = "LinReg"
-ARIMA   = "ARIMA"
-GAM     = "GAM"
+# Models
+LIN_REG   = "LinReg"
+ARIMA     = "ARIMA"
+GAM       = "GAM"
+
+# Keys
+SYM_ONE    = 'SYM_ONE'
+SYM_TWO    = 'SYM_TWO'
+API_KEY    = 'API_KEY'
+LABEL      = '_LABEL'
+START_DATE = "START_DATE"
 
 models = [
   LIN_REG,
