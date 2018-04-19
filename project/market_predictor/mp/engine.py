@@ -65,7 +65,7 @@ class Engine:
     ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
             self.dc.config[START_DATE]))
     ax.set_ylabel("Future price ($)")
-    ax.scatter(Xtr[:,0], ytr, color='red', s=2)
+    ax.scatter(Xtr[:,0], ytr, color='red', s=4)
     ax.plot(X[:,0], X[:,2], color='orange')
 
 
@@ -74,7 +74,7 @@ class Engine:
     ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
             self.dc.config[START_DATE]))
     ax.set_ylabel("Future price ($)")
-    ax.scatter(Xtst[:,0], pred, color='red', s=2)
+    ax.scatter(Xtst[:,0], pred, color='red', s=4)
     ax.scatter(X_fc[-self.dc.forecast:,0], forecast[-self.dc.forecast:], color='violet', s=0.75)
     ax.plot(X[:,0], X[:,2], color='orange')
 
@@ -92,7 +92,7 @@ class Engine:
     self._init_plot(X_plt)
 
     # Train and test then plot results
-    Xtr, Xtst, X_fc, ytr, pred, forecast = self.mc.do_sklearn(X, y, X_fc, self.model)
+    Xtr, Xtst, ytr, pred, forecast = self.mc.do_sklearn(X, y, X_fc, self.model)
     self._plot(X_plt, Xtr, Xtst, X_fc, ytr, pred, forecast)   
    
 

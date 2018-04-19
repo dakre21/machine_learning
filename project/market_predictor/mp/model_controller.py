@@ -36,7 +36,7 @@ class ModelController:
     clf     = None
 
     # Preprocess data
-    imp = preprocessing.Imputer()
+    #imp = preprocessing.Imputer()
 
     # Split data into train and test
     Xtr, Xtst, ytr, ytst = train_test_split(X, y)
@@ -56,14 +56,11 @@ class ModelController:
     accuracy = clf.score(Xtst, ytst)
 
     # Forecast data now
-    X_fc = np.vstack((X, X_fc))
-    X_fc_og = X_fc
-    X_fc = imp.fit_transform(X_fc)
     forecast = clf.predict(X_fc)
 
     # Report Accuracy for Model
     logger.info("The accuracy of the %s model was %0.4f" % (model, accuracy))
 
-    return Xtr, Xtst, X_fc_og, ytr, predictions, forecast
+    return Xtr, Xtst, ytr, predictions, forecast
 
 

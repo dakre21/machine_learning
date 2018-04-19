@@ -49,8 +49,6 @@ class DataController:
     the dataframe out to the forcasted timeline
     """
     # Forward declarations
-    one   = []
-    two   = []
     dates = []
 
     # TODO: If choosing weekly, quarterly, annually etc fix this to extend by that amount
@@ -60,7 +58,8 @@ class DataController:
     tmp = [pd.Timestamp(x) for x in tmp]
     dates = np.append(dates, tmp)
 
-    fc = np.append(one, np.repeat(np.nan, self.forecast))
+    # Generate future data based on gaussian distribution of mean and std of sym one
+    fc = np.random.normal(loc=self.mean, scale=self.std, size=self.forecast)
 
     return fc, dates
 
@@ -110,6 +109,10 @@ class DataController:
             collapse=self.interval)
     sym_one_data = sym_one_data[self.config[SYM_ONE+LABEL]]
     sym_two_data = sym_two_data[self.config[SYM_TWO+LABEL]]
+
+    # Collect mean and standard deviation of sym one
+    self.mean = sym_one_data.mean()
+    self.std  = sym_one_data.std()
 
     # Synchronize data
     dates_one = np.array(sym_one_data.index.tolist())
