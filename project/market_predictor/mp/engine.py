@@ -40,14 +40,14 @@ class Engine:
     plt.figure(figsize=(15,10))
     plt.suptitle("Market Predictor Results")
 
-    ax = plt.subplot(2, 3, 1)
+    ax = plt.subplot(2, 2, 1)
     ax.set_title("Original " + self.dc.config[SYM_ONE])
     ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
             self.dc.config[START_DATE]))
     ax.set_ylabel("Future price ($)")
     ax.plot(X[:,0], X[:,1], color='blue')
 
-    ax = plt.subplot(2, 3, 2)
+    ax = plt.subplot(2, 2, 2)
     ax.set_title("Original " + self.dc.config[SYM_TWO])
     ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
             self.dc.config[START_DATE]))
@@ -60,7 +60,7 @@ class Engine:
     _plot(self, Xtst, X_fc, pred, forecast): is a private function that
     will plot the data post learning and test
     """
-    ax = plt.subplot(2, 3, 3)
+    ax = plt.subplot(2, 2, 3)
     ax.set_title("Training Results")
     ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
             self.dc.config[START_DATE]))
@@ -69,20 +69,13 @@ class Engine:
     ax.plot(X[:,0], X[:,2], color='orange')
 
 
-    ax = plt.subplot(2, 3, 4)
-    ax.set_title("Testing Results")
+    ax = plt.subplot(2, 2, 4)
+    ax.set_title("Testing and Forecast Results")
     ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
             self.dc.config[START_DATE]))
     ax.set_ylabel("Future price ($)")
     ax.scatter(Xtst[:,0], pred, color='red', s=0.75)
-    ax.plot(X[:,0], X[:,2], color='orange')
-
-    ax = plt.subplot(2, 3, 5)
-    ax.set_title("Forecast Results")
-    ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
-            self.dc.config[START_DATE]))
-    ax.set_ylabel("Future price ($)")
-    ax.scatter(X_fc[:,0], forecast, color='violet', s=0.75)
+    ax.scatter(X_fc[-self.dc.forecast:,0], forecast[-self.dc.forecast:], color='violet', s=0.75)
     ax.plot(X[:,0], X[:,2], color='orange')
 
     plt.show()

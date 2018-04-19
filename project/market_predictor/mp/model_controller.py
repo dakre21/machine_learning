@@ -34,7 +34,6 @@ class ModelController:
 
     # Preprocess data
     imp = preprocessing.Imputer()
-    #X = preprocessing.scale(X)
 
     # Split data into train and test
     Xtr, Xtst, ytr, ytst = train_test_split(X, y)

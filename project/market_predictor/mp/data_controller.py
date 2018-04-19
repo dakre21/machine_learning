@@ -71,6 +71,7 @@ class DataController:
     and forecast it for sklearn logistic regression
     """
     vals_one, vals_two, dates = self._get_data() 
+    num_dates = len(dates)
    
     # Setup data for training and testing
     dates = self._convert_dates_to_int(dates)
@@ -83,6 +84,7 @@ class DataController:
     # Setup forecasting data
     fc, dates = self._forecast_data()
     dates = self._convert_dates_to_int(dates)
+    dates = [(x + num_dates) for x in range(len(dates))]
     X_fc = np.column_stack((dates, fc))
 
     return X_one, vals_two, X_fc, X_plt
