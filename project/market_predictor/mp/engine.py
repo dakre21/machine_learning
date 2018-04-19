@@ -67,14 +67,16 @@ class Engine:
     ax.scatter(Xtr[:,0], ytr, color='blue', s=4)
     ax.plot(X[:,0], X[:,2], color='green')
 
-
     ax = plt.subplot(2, 2, 4)
     ax.set_title("Testing and Forecast Results with Model %s" % self.model)
     ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
             self.dc.config[START_DATE]))
     ax.set_ylabel("Future price ($)")
     ax.scatter(Xtst[:,0], pred, color='blue', s=4)
-    ax.scatter(X_fc[-self.dc.forecast:,0], forecast[-self.dc.forecast:], color='violet', s=0.75)
+    m, b = np.polyfit(X_fc[-self.dc.forecast:,0], forecast[-self.dc.forecast:], 1)
+    #ax.scatter(X_fc[-self.dc.forecast:,0], forecast[-self.dc.forecast:], \
+    #        color='violet', s=2)
+    ax.plot(X_fc[-self.dc.forecast:,0], m*X_fc + b, '-', color='violet')
     ax.plot(X[:,0], X[:,2], color='green')
 
     plt.show()
