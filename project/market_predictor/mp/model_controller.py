@@ -10,6 +10,10 @@ from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import SGDRegressor
+from sklearn.linear_model import PassiveAggressiveRegressor
+from sklearn.linear_model import LassoLars
+from sklearn.ensemble import BaggingRegressor
 
 
 class ModelController:
@@ -38,9 +42,17 @@ class ModelController:
     # Split data into train and test
     Xtr, Xtst, ytr, ytst = train_test_split(X, y)
 
-    # Train model
+    # Train model - Assumption default settings
     if model == LIN_REG: 
       clf = LinearRegression()
+    elif model == BAGGING:
+      clf = BaggingRegressor()
+    elif model == SGD:
+      clf = SGDRegressor()
+    elif model == PAL:
+      clf = PassiveAggressiveRegressor()
+    else:
+      clf = LassoLars()
 
     clf.fit(Xtr, ytr)
     predictions = clf.predict(Xtst)

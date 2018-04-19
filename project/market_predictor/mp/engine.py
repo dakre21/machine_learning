@@ -61,20 +61,20 @@ class Engine:
     will plot the data post learning and test
     """
     ax = plt.subplot(2, 2, 3)
-    ax.set_title("Training Results")
+    ax.set_title("Training Results with Model %s" % self.model)
     ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
             self.dc.config[START_DATE]))
     ax.set_ylabel("Future price ($)")
-    ax.scatter(Xtr[:,0], ytr, color='red', s=0.75)
+    ax.scatter(Xtr[:,0], ytr, color='red', s=2)
     ax.plot(X[:,0], X[:,2], color='orange')
 
 
     ax = plt.subplot(2, 2, 4)
-    ax.set_title("Testing and Forecast Results")
+    ax.set_title("Testing and Forecast Results with Model %s" % self.model)
     ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
             self.dc.config[START_DATE]))
     ax.set_ylabel("Future price ($)")
-    ax.scatter(Xtst[:,0], pred, color='red', s=0.75)
+    ax.scatter(Xtst[:,0], pred, color='red', s=2)
     ax.scatter(X_fc[-self.dc.forecast:,0], forecast[-self.dc.forecast:], color='violet', s=0.75)
     ax.plot(X[:,0], X[:,2], color='orange')
 
@@ -87,17 +87,12 @@ class Engine:
     application
     """
 
-    if self.model == LIN_REG:
-      X, y, X_fc, X_plt = self.dc.get_data_sklearn()
-      self._init_plot(X_plt)
-      Xtr, Xtst, X_fc, ytr, pred, forecast = self.mc.do_sklearn(X, y, X_fc, self.model)
-      self._plot(X_plt, Xtr, Xtst, X_fc, ytr, pred, forecast)   
+    # Get data for sklearn & setup initial plot
+    X, y, X_fc, X_plt = self.dc.get_data_sklearn()
+    self._init_plot(X_plt)
 
-    elif self.model == ARIMA:
-      # TODO - Implement
-      pass
-    else:
-      # TODO - Implement
-      pass
+    # Train and test then plot results
+    Xtr, Xtst, X_fc, ytr, pred, forecast = self.mc.do_sklearn(X, y, X_fc, self.model)
+    self._plot(X_plt, Xtr, Xtst, X_fc, ytr, pred, forecast)   
+   
 
-    

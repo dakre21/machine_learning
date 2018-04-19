@@ -7,9 +7,11 @@ coloredlogs.install(level='DEBUG')
 
 # Global declarations
 # Models
-LIN_REG   = "LinReg"
-ARIMA     = "ARIMA"
-GAM       = "GAM"
+LIN_REG   = "LinearRegression"
+BAGGING   = "Bagging"
+#SGD       = "SGD"
+#PAL       = "PAL"
+LASSO     = "LASSO"
 
 # Keys
 SYM_ONE    = 'SYM_ONE'
@@ -20,8 +22,10 @@ START_DATE = "START_DATE"
 
 models = [
   LIN_REG,
-  ARIMA,
-  GAM
+  BAGGING,
+  SGD,
+  PAL,
+  LASSO
 ]
 
 intervals = [
