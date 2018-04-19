@@ -25,7 +25,6 @@ class Engine:
     self.interval    = interval
     self.model       = model
     self.data_path   = data_path
-    self.cm_bright   = ListedColormap(['red', 'blue'])
 
 
   def __del__(self):
@@ -45,7 +44,7 @@ class Engine:
     ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
             self.dc.config[START_DATE]))
     ax.set_ylabel("Future price ($)")
-    ax.plot(X[:,0], X[:,1], color='blue')
+    ax.plot(X[:,0], X[:,1], color='red')
 
     ax = plt.subplot(2, 2, 2)
     ax.set_title("Original " + self.dc.config[SYM_TWO])
@@ -65,8 +64,8 @@ class Engine:
     ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
             self.dc.config[START_DATE]))
     ax.set_ylabel("Future price ($)")
-    ax.scatter(Xtr[:,0], ytr, color='red', s=4)
-    ax.plot(X[:,0], X[:,2], color='orange')
+    ax.scatter(Xtr[:,0], ytr, color='blue', s=4)
+    ax.plot(X[:,0], X[:,2], color='green')
 
 
     ax = plt.subplot(2, 2, 4)
@@ -74,9 +73,9 @@ class Engine:
     ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
             self.dc.config[START_DATE]))
     ax.set_ylabel("Future price ($)")
-    ax.scatter(Xtst[:,0], pred, color='red', s=4)
+    ax.scatter(Xtst[:,0], pred, color='blue', s=4)
     ax.scatter(X_fc[-self.dc.forecast:,0], forecast[-self.dc.forecast:], color='violet', s=0.75)
-    ax.plot(X[:,0], X[:,2], color='orange')
+    ax.plot(X[:,0], X[:,2], color='green')
 
     plt.show()
 
