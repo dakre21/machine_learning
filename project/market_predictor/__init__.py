@@ -9,9 +9,8 @@ coloredlogs.install(level='DEBUG')
 # Models
 LIN_REG   = "LinearRegression"
 BAGGING   = "Bagging"
-#SGD       = "SGD"
-#PAL       = "PAL"
 LASSO     = "LASSO"
+RF        = "RandomForest"
 
 # Keys
 SYM_ONE    = 'SYM_ONE'
@@ -23,9 +22,8 @@ START_DATE = "START_DATE"
 models = [
   LIN_REG,
   BAGGING,
-  SGD,
-  PAL,
-  LASSO
+  LASSO,
+  RF
 ]
 
 intervals = [

@@ -10,8 +10,7 @@ from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.linear_model import LinearRegression
-from sklearn.linear_model import SGDRegressor
-from sklearn.linear_model import PassiveAggressiveRegressor
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LassoLars
 from sklearn.ensemble import BaggingRegressor
 
@@ -47,10 +46,8 @@ class ModelController:
       clf = LinearRegression()
     elif model == BAGGING:
       clf = BaggingRegressor()
-    elif model == SGD:
-      clf = SGDRegressor()
-    elif model == PAL:
-      clf = PassiveAggressiveRegressor()
+    elif model == RF:
+      clf = RandomForestRegressor()
     else:
       clf = LassoLars()
 
