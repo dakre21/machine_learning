@@ -34,7 +34,64 @@ class DataController:
     pass
 
 
-  def get_data(self):
+  def _convert_dates_to_int(self, dates):
+    """
+    _convert_dates_to_int(self, dates) takes a well formated TimeStamp date formart
+    and convert it into a list of ints which sklearn and other like libraries can 
+    process for learning
+    """
+
+    # Maintain a good history of the real dates as a class object
+    self.dates = dates
+    dates = [x for x in range(len(dates))]
+
+    return dates
+
+  
+  def _stack_data(self, vals_one, vals_two, dates):
+    """
+    _stack_data(self, vals_one, vals_two, dates) is a private function which stacks and
+    transposes the lists onto an np.array
+    """
+    dates = self._convert_dates_to_int(dates)
+    X_one = np.column_stack((dates, vals_one))
+    X_two = np.column_stack((dates, vals_two))
+
+    return X_one, X_two
+
+
+  def _forecast(self, vals_one, vals_two, dates):
+    """
+    _forecast(self, vals_one, vals_two, dates) is a private function which extends 
+    the dataframe out to the forcasted timeline
+    """
+    # TODO: If choosing weekly, quarterly, annually etc fix this to extend by that amount
+    tomorrow = datetime.now() + timedelta(1)
+    one = np.array(pd.date_range(tomorrow, periods=self.forecast))
+    two = np.array(pd.date_range(tomorrow, periods=self.forecast))
+
+    one = [pd.Timestamp(x) for x in one]
+    dates = np.append(dates, one)
+
+    vals_one = np.append(vals_one, np.repeat(np.nan, self.forecast))
+    vals_two = np.append(vals_two, np.repeat(np.nan, self.forecast))
+
+    return vals_one, vals_two, dates
+
+
+  def get_data_log_reg(self):
+    """
+    get_data_log_reg(self): Is a function that will fetch data from quandl
+    and forecast it for sklearn logistic regression
+    """
+    vals_one, vals_two, dates = self._get_data() 
+    #vals_one, vals_two, dates = self._forecast_data(vals_one, vals_two, dates)
+    X_one, X_two = self._stack_data(vals_one, vals_two, dates)
+
+    return X_one, vals_one
+
+
+  def _get_data(self):
     """
     get_data(self): Is a function that will retrieve market data for
     SYM ONE and TWO
@@ -100,22 +157,6 @@ class DataController:
       else:
         count += 1
 
-    # Setup Forecast 
-    tomorrow = datetime.now() + timedelta(1)
-    one = np.array(pd.date_range(tomorrow, periods=self.forecast))
-    two = np.array(pd.date_range(tomorrow, periods=self.forecast))
 
-    one = [pd.Timestamp(x) for x in one]
-    two = [pd.Timestamp(x) for x in two]
-
-    dates_one = np.append(dates_one, one)
-    dates_two = np.append(dates_two, two)
-
-    vals_one = np.append(vals_one, np.repeat(np.nan, self.forecast))
-    vals_two = np.append(vals_two, np.repeat(np.nan, self.forecast))
-
-    X_one = np.vstack((dates_one, vals_one)).T
-    X_two = np.vstack((dates_two, vals_two)).T
-
-    return X_one, vals_one
+    return vals_one, vals_two, dates_one
 

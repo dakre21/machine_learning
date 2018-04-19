@@ -6,22 +6,10 @@ Title: Market Predictor Application main
 
 import click
 import yaml
-from market_predictor import logger
+from market_predictor import logger, models, intervals
 from mp.engine import Engine
 from mp.validate import validate_inputs
 
-# Global declarations
-models = [
-  "LR",
-  "RNN"
-]
-intervals = [
-  "daily",
-  "weekly",
-  "monthly",
-  "quarterly",
-  "annual"
-]
 
 def _read_config(config_path):
   """

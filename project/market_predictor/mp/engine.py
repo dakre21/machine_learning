@@ -6,8 +6,10 @@ Title: Market Predictor Engine
 
 import numpy as np
 import pandas as pd
+from market_predictor import *
 from market_predictor.mp.data_controller import DataController
-from sklearn.model_selection import train_test_split
+from market_predictor.mp.model_controller import ModelController
+
 
 class Engine:
   """
@@ -16,7 +18,8 @@ class Engine:
   """
 
   def __init__(self, model, interval, forecast, config, data_path):
-    self.dc = DataController(interval, forecast, config)
+    self.dc          = DataController(interval, forecast, config)
+    self.mc          = ModelController() 
     self.model       = model
     self.data_path   = data_path
 
@@ -26,23 +29,18 @@ class Engine:
 
 
   def predict(self):
-    # Step 1 - Get data for S&P and VIX
-    X, y = self.dc.get_data()
+    """
+    predict(self): Core function that carries out the logic for the entire application
+    """
 
-    # Step 2 - Split data into train and test
-    Xtr, Xtst, ytr, ytst = train_test_split(X, y, random_state=42)
+    if self.model == LOG_REG:
+      X, y = self.dc.get_data_log_reg()
+      self.mc.do_log_reg(X, y)
+    elif self.model == ARIMA:
+      # TODO - Implement
+      pass
+    else:
+      # TODO - Implement
+      pass
 
-    print Xtr
-    print Xtst
-    print ytr
-    print ytst
-
-    # Step 3 - Train model
-
-    # Step 4 - Validate model & report error to csv
-
-    # Step 5 - Test model & report error to csv
-
-    # Step 6 - Report prediction & display graph
-
-
+    
