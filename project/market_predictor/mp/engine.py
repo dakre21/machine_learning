@@ -22,6 +22,7 @@ class Engine:
   def __init__(self, model, interval, forecast, config, data_path):
     self.dc          = DataController(interval, forecast, config)
     self.mc          = ModelController() 
+    self.interval    = interval
     self.model       = model
     self.data_path   = data_path
     self.cm_bright   = ListedColormap(['red', 'blue'])
@@ -36,10 +37,54 @@ class Engine:
     init_plot(self, X, y) is a private function that initializes the plot 
     scheme for this application
     """
-    plt.figure(figsize=(20,10))
-    ax = plt.subplot(2, 2, 1)
-    ax.set_title("Original " + self.dc.config[SYM_ONE] + " & " + self.dc.config[SYM_TWO])
-    ax.scatter(X[:,0], X[:,1], cmap=self.cm_bright, alpha=0.8)
+    plt.figure(figsize=(15,10))
+    plt.suptitle("Market Predictor Results")
+
+    ax = plt.subplot(2, 3, 1)
+    ax.set_title("Original " + self.dc.config[SYM_ONE])
+    ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
+            self.dc.config[START_DATE]))
+    ax.set_ylabel("Future price ($)")
+    ax.plot(X[:,0], X[:,1], color='blue')
+
+    ax = plt.subplot(2, 3, 2)
+    ax.set_title("Original " + self.dc.config[SYM_TWO])
+    ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
+            self.dc.config[START_DATE]))
+    ax.set_ylabel("Future price ($)")
+    ax.plot(X[:,0], X[:,2], color='green')
+
+
+  def _plot(self, X, Xtr, Xtst, X_fc, ytr, pred, forecast):
+    """
+    _plot(self, Xtst, X_fc, pred, forecast): is a private function that
+    will plot the data post learning and test
+    """
+    ax = plt.subplot(2, 3, 3)
+    ax.set_title("Training Results")
+    ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
+            self.dc.config[START_DATE]))
+    ax.set_ylabel("Future price ($)")
+    ax.scatter(Xtr[:,0], ytr, color='red', s=0.75)
+    ax.plot(X[:,0], X[:,2], color='orange')
+
+
+    ax = plt.subplot(2, 3, 4)
+    ax.set_title("Testing Results")
+    ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
+            self.dc.config[START_DATE]))
+    ax.set_ylabel("Future price ($)")
+    ax.scatter(Xtst[:,0], pred, color='red', s=0.75)
+    ax.plot(X[:,0], X[:,2], color='orange')
+
+    ax = plt.subplot(2, 3, 5)
+    ax.set_title("Forecast Results")
+    ax.set_xlabel("Epochs reported %s since start date %s" % (self.interval, \
+            self.dc.config[START_DATE]))
+    ax.set_ylabel("Future price ($)")
+    ax.scatter(X_fc[:,0], forecast, color='violet', s=0.75)
+    ax.plot(X[:,0], X[:,2], color='orange')
+
     plt.show()
 
 
@@ -52,7 +97,9 @@ class Engine:
     if self.model == LIN_REG:
       X, y, X_fc, X_plt = self.dc.get_data_sklearn()
       self._init_plot(X_plt)
-      self.mc.do_sklearn(X, y, X_fc, self.model)
+      Xtr, Xtst, X_fc, ytr, pred, forecast = self.mc.do_sklearn(X, y, X_fc, self.model)
+      self._plot(X_plt, Xtr, Xtst, X_fc, ytr, pred, forecast)   
+
     elif self.model == ARIMA:
       # TODO - Implement
       pass
