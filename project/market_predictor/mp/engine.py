@@ -73,10 +73,12 @@ class Engine:
             self.dc.config[START_DATE]))
     ax.set_ylabel("Future price ($)")
     ax.scatter(Xtst[:,0], pred, color='blue', s=4)
-    m, b = np.polyfit(X_fc[-self.dc.forecast:,0], forecast[-self.dc.forecast:], 1)
-    #ax.scatter(X_fc[-self.dc.forecast:,0], forecast[-self.dc.forecast:], \
-    #        color='violet', s=2)
-    ax.plot(X_fc[-self.dc.forecast:,0], m*X_fc + b, '-', color='violet')
+    fn = np.polyfit(X_fc[-self.dc.forecast:,0], forecast[-self.dc.forecast:], 3)
+    fn = np.poly1d(fn)
+    ax.plot(X_fc[-self.dc.forecast:,0], fn(X_fc[-self.dc.forecast:,0]), '-', \
+            color='violet')
+    ax.scatter(X_fc[-self.dc.forecast:,0], forecast[-self.dc.forecast:], \
+            color='orange', s=1)
     ax.plot(X[:,0], X[:,2], color='green')
 
     plt.show()
