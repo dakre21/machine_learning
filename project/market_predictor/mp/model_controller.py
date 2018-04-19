@@ -6,13 +6,13 @@ Title: Market Predictor Model Controller
 
 import numpy as np
 from market_predictor import *
-from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LassoLars
 from sklearn.ensemble import BaggingRegressor
+from sklearn.ensemble import AdaBoostRegressor
 
 
 class ModelController:
@@ -35,9 +35,6 @@ class ModelController:
     # Forward declarations
     clf     = None
 
-    # Preprocess data
-    #imp = preprocessing.Imputer()
-
     # Split data into train and test
     Xtr, Xtst, ytr, ytst = train_test_split(X, y)
 
@@ -48,6 +45,8 @@ class ModelController:
       clf = BaggingRegressor()
     elif model == RF:
       clf = RandomForestRegressor()
+    elif model == BOOSTING:
+      clf = AdaBoostRegressor()
     else:
       clf = LassoLars()
 

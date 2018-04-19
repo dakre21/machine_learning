@@ -9,6 +9,7 @@ coloredlogs.install(level='DEBUG')
 # Models
 LIN_REG   = "LinearRegression"
 BAGGING   = "Bagging"
+BOOSTING  = "Boosting"
 LASSO     = "LASSO"
 RF        = "RandomForest"
 
@@ -22,6 +23,7 @@ START_DATE = "START_DATE"
 models = [
   LIN_REG,
   BAGGING,
+  BOOSTING,
   LASSO,
   RF
 ]
